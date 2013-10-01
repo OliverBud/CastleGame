@@ -1,13 +1,13 @@
 package com.example.initial_game;
 
 
+
 import android.os.Bundle;
 import android.os.Handler;
 import android.app.Activity;
 import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 
 public class MainActivity extends Activity{
@@ -20,6 +20,7 @@ public class MainActivity extends Activity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		Handler h = new Handler();
+		
 
 		h.postDelayed(new Runnable() {
             @Override
@@ -40,8 +41,9 @@ public class MainActivity extends Activity{
 		public boolean onTouch(View v, MotionEvent event) {
 			switch(event.getAction()){
             case (MotionEvent.ACTION_DOWN):
-              //write stuff
-                break;
+            initialGameView drawView = (initialGameView) findViewById(R.id.the_canvas);
+        	drawView.onTouch(v, event);
+              break;
             }
 			return false;
 		}
