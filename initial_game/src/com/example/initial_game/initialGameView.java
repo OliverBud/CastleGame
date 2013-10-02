@@ -9,6 +9,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -17,11 +18,19 @@ import android.view.View.OnTouchListener;
 public class initialGameView extends View implements OnTouchListener{
 
 	private Paint p;
-	ArrayList<Bitmap> BitMap_array; 
-	ArrayList<Point> BM_points;
+	Bitmap.Config conf = Bitmap.Config.ARGB_8888;
+	
 	ArrayList<LineObject> line_array;
+	
 	boolean touched;
 	Point line_touch;
+	Bitmap bouncing_dot;
+	private Rect dot_bounds;
+    private Point dot_point;
+   
+    private sprite dot;
+    
+    int dot_color;
 	
 	
 	public initialGameView(Context context, AttributeSet attrs) {
@@ -29,15 +38,14 @@ public class initialGameView extends View implements OnTouchListener{
 		line_touch = new Point();
 		touched = false;
 		p = new Paint();
-		Bitmap.Config conf = Bitmap.Config.ARGB_8888;
-		BitMap_array = new ArrayList<Bitmap>();
-		BM_points = new ArrayList<Point>();
-		line_array = new ArrayList<LineObject>();
 		
-		Bitmap first_bitMap = Bitmap.createBitmap(100, 100, conf);
-		BitMap_array.add(first_bitMap);
-		Bitmap second_bitMap = Bitmap.createBitmap(100, 100, conf);
-		BitMap_array.add(second_bitMap);
+		line_array = new ArrayList<LineObject>();
+
+		bouncing_dot = Bitmap.createBitmap(100, 100, conf);
+		dot_bounds = new Rect(0,0, bouncing_dot.getWidth(), bouncing_dot.getHeight());
+		dot_point = new Point(-1, -1);
+		dot_color = Color.YELLOW;
+		dot = new sprite(bouncing_dot, dot_point, dot_bounds);
 		
 		//initialize things
 	}
@@ -49,13 +57,12 @@ public class initialGameView extends View implements OnTouchListener{
         point.y = (int) event.getY();
         
         if (touched){
-        	Bitmap.Config conf = Bitmap.Config.ARGB_8888;
         	Bitmap new_Bitmap = Bitmap.createBitmap(Math.abs(point.x - line_touch.x), Math.abs(point.y - line_touch.y), conf);
+        	Rect new_bounds = new Rect(0, 0, new_Bitmap.getWidth(),new_Bitmap.getHeight());
         	Point new_point = new Point();
         	new_point.x = (point.x >= line_touch.x ? line_touch.x : point.x);
         	new_point.y = (point.y >= line_touch.y ? line_touch.y : point.y);
         	boolean positive;
-        	
         	
         	if (point.x >= line_touch.x){
         		if (point.y >= line_touch.y){
@@ -74,18 +81,70 @@ public class initialGameView extends View implements OnTouchListener{
         		}
         	}
         	
-        	line_array.add(new LineObject(new_Bitmap, new_point, positive));
-        	
-        	
+        	line_array.add(new LineObject(new_Bitmap, new_point, positive, new_bounds));
         	touched = false;
         }
         else{
         	line_touch = point;
-        
         	touched = true;
         }
         invalidate();
         return true;
+	}
+	
+	synchronized public void setDot(int x, int y) {
+	       dot_point=new Point(x,y);
+	       dot.setPoint(dot_point);
+	}
+	
+	synchronized public Point getDot() {
+	       return dot.getPoint();
+	}
+	   
+	synchronized public int getDotX() {
+	       return dot_point.x;
+	}
+
+	synchronized public int getDotY() {
+	       return dot_point.y;
+	}
+	
+	synchronized public int getDotWidth() {
+	       	
+			return dot.getBounds().width();
+	}
+
+	synchronized public int getDotHeight() {
+	        return dot.getBounds().height();
+	}
+	
+	private boolean checkForCollision(sprite sprite_first, sprite sprite_second) {
+	   Point sprite1 = sprite_first.getPoint();
+	   Point sprite2 = sprite_second.getPoint();
+	   Rect sprite1_bounds = sprite_first.getBounds();
+	   Rect sprite2_bounds = sprite_second.getBounds();
+	   Bitmap bm1 = sprite_first.getBitmap();
+	   Bitmap bm2 = sprite_second.getBitmap();
+		if (sprite1.x<0 && sprite2.x<0 && sprite1.y<0 && sprite2.y<0) return false;
+	    Rect r1 = new Rect(sprite1.x, sprite1.y, sprite1.x
+	+ sprite1_bounds.width(),  sprite1.y + sprite1_bounds.height());
+	    Rect r2 = new Rect(sprite2.x, sprite2.y, sprite2.x +
+	sprite2_bounds.width(), sprite2.y + sprite2_bounds.height());
+	    Rect r3 = new Rect(r1);
+	    if(r1.intersect(r2)) {
+	           for (int i = r1.left; i<r1.right; i++) {
+	                  for (int j = r1.top; j<r1.bottom; j++) {
+	                        if (bm1.getPixel(i-r3.left, j-r3.top)!=
+	                        		Color.TRANSPARENT) {
+	                              if (bm2.getPixel(i-r2.left, j-r2.top) !=
+	                            		  Color.TRANSPARENT) {
+	                                          return true;
+	                             }
+	                        }
+	                  }
+	             }
+	      }
+	    return false;
 	}
 	
 	@Override
@@ -95,76 +154,54 @@ public class initialGameView extends View implements OnTouchListener{
         p.setStrokeWidth(1);
         canvas.drawRect(0, 0, getWidth(), getHeight(), p);
         p.setColor(Color.WHITE);
-        Point test_point1 = new Point();
-        Point test_point2 = new Point();
         
         int maxX = canvas.getWidth();
         int maxY = canvas.getHeight();
         
-        test_point1.x = ( 2 * (maxX - (maxX % 2) ) ) / 4;
-        test_point1.y = ( 2 * (maxY - (maxY % 2) ) ) / 4;
-        BM_points.add(test_point1);
-        BM_points.add(test_point2);
-        test_point2.x = (maxX - (maxX % 2) ) / 4;
-        test_point2.y = (maxY - (maxY % 2) ) / 4;
-       // canvas.drawCircle(test_point.x, test_point.y, 5, p);
-        
         Canvas BM_canvas = new Canvas();
-//        p.setColor(Color.GREEN);
-//        BM_canvas.setBitmap(first_bitMap);
-//        BM_canvas.drawRect(0, 0, first_bitMap.getWidth(), first_bitMap.getWidth(), p);
-//        
-//        p.setColor(Color.WHITE);
-//        BM_canvas.drawRect(10, 10 , 20 , 20, p);
+        BM_canvas.setBitmap(dot.getBitmap());
+        p.setColor(Color.TRANSPARENT);
+        BM_canvas.drawRect(0, 0, 100, 100, p);
         
-        
-  //      canvas.drawBitmap(first_bitMap, test_point.x, test_point.y, null);
-
-        int counter = 0;
-        for (Bitmap BM : BitMap_array){
-        	BM_canvas.setBitmap(BM); 
-        	
-        	p.setColor(Color.GREEN);
-        	BM_canvas.drawRect(0, 0, BM.getWidth(), BM.getWidth(), p);
-        	
-        	p.setColor(Color.WHITE);
-        	if (counter == 1){
-            	p.setColor(Color.RED);
-            }
-            BM_canvas.drawRect(10, 10 , 20 , 20, p);
-            
-            if (counter == 1){
-            	p.setColor(Color.RED);
-            }
-        	canvas.drawBitmap(BM, BM_points.get(counter).x, BM_points.get(counter).y, null);
-        	
-        	counter += 1;
-        }
+       
+        p.setColor(dot_color);
+        BM_canvas.drawCircle(50, 50, 50, p);
+        canvas.drawBitmap(dot.getBitmap(), dot.getPointX(), dot.getPointY(), null);
         
         Bitmap map;
+        p.setStrokeWidth(10);
         for (LineObject line : line_array){
         	
         	map = line.getBitmap();
         	Point line_point = line.getPoint();
         	BM_canvas.setBitmap(map);
-        	p.setColor(Color.BLUE);
+        	p.setColor(Color.TRANSPARENT);
         	BM_canvas.drawRect(0, 0, map.getWidth(), map.getHeight(), p);
         	p.setColor(Color.WHITE);
         	if (line.getPositive()){
-        		BM_canvas.drawLine(0, map.getHeight(), map.getWidth(), 0, p);
+        		BM_canvas.drawLine(0 + 10, map.getHeight() - 10, map.getWidth() - 10, 0 + 10 , p);
         	}
         	else{
-        		BM_canvas.drawLine(0, 0, map.getWidth(), map.getHeight(), p);
-        		
+        		BM_canvas.drawLine(0 + 10, 0 + 10, map.getWidth() - 10, map.getHeight() - 10, p);
         	}
         	canvas.drawBitmap(map, line_point.x, line_point.y, null);
-        	
         }
         
-        
-        
-        
-        
+        for (LineObject collision_line : line_array){
+        	if (checkForCollision(dot, (sprite) collision_line)){
+        		BM_canvas.setBitmap(dot.getBitmap());
+        		if (dot_color == Color.YELLOW){
+        				dot_color = Color.RED;
+        		}
+        		else{
+        			dot_color = Color.YELLOW;
+        		}
+        		break;
+        	}
+        	else{
+        	}
+        }
+       
         //draw things
 		
 	}

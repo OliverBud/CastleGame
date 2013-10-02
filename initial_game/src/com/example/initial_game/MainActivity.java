@@ -1,10 +1,9 @@
 package com.example.initial_game;
 
-
-
 import android.os.Bundle;
 import android.os.Handler;
 import android.app.Activity;
+import android.graphics.Point;
 import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
@@ -14,6 +13,10 @@ public class MainActivity extends Activity{
 
 	private Handler frame = new Handler();
 	private static final int FRAME_RATE = 20;
+	
+	private Point dot_velocity;
+	private int dot_maxX;
+	private int dot_maxY;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +56,12 @@ public class MainActivity extends Activity{
 	synchronized public void initGfx(){
 		
 		//write stuff
+		((initialGameView)findViewById(R.id.the_canvas)).setDot(10, 10);
+		dot_velocity = new Point(10, 15);
+		dot_maxX = findViewById(R.id.the_canvas).getWidth() -
+				((initialGameView)findViewById(R.id.the_canvas)).getDotWidth();
+		dot_maxY = findViewById(R.id.the_canvas).getHeight() -
+				((initialGameView)findViewById(R.id.the_canvas)).getDotHeight();
 		
 		frame.removeCallbacks(frameUpdate);
         frame.postDelayed(frameUpdate, FRAME_RATE);
@@ -65,6 +74,21 @@ public class MainActivity extends Activity{
 			frame.removeCallbacks(frameUpdate);
 			//write stuff
 			
+			Point sprite1 = new Point
+					(((initialGameView)findViewById(R.id.the_canvas)).getDotX(),
+					 ((initialGameView)findViewById(R.id.the_canvas)).getDotY()) ;
+			
+			sprite1.x = sprite1.x + dot_velocity.x;
+	        if (sprite1.x > dot_maxX || sprite1.x < 5) {
+	               dot_velocity.x *= -1;
+	        }
+	        sprite1.y = sprite1.y + dot_velocity.y;
+	        if (sprite1.y > dot_maxY || sprite1.y < 5) {
+	              dot_velocity.y *= -1;
+	        }
+	          
+	        ((initialGameView)findViewById(R.id.the_canvas)).setDot(sprite1.x, sprite1.y);
+	        ((initialGameView)findViewById(R.id.the_canvas)).invalidate();
 			frame.postDelayed(frameUpdate, FRAME_RATE);
 		}
 		

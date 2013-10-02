@@ -2,42 +2,24 @@ package com.example.initial_game;
 
 import android.graphics.Bitmap;
 import android.graphics.Point;
+import android.graphics.Rect;
 
-public class LineObject {
+public class LineObject extends sprite{
 	
-	private Bitmap BM;
-	private Point point;
+
 	private boolean positive;
 	
-	public LineObject(Bitmap BM, Point point, boolean positive){
-		this.BM = BM;
-		this.point = point;
+	public LineObject(Bitmap BM, Point point, boolean positive, Rect bounds){
+		super(BM, point, bounds);
 		this.positive = positive;
-		
-	}
-	
-	public Bitmap getBitmap(){
-		return BM;
-	}
-	
-	public Point getPoint(){
-		return point;
 	}
 	
 	public boolean getPositive(){
 		return positive;
 	}
 	
-	public void setBitmap(Bitmap BM){
-		this.BM = BM;
-	}
-	
-	public void setPoint(Point point){
-		this.point = point;
-	}
-	
 	public void setPositive(boolean positive){
 		this.positive = positive;
 	}
-
+	
 }
