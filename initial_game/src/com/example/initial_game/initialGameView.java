@@ -1,6 +1,7 @@
 package com.example.initial_game;
 
 import java.util.ArrayList;
+import java.lang.Math;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -53,10 +54,18 @@ public class initialGameView extends View implements OnTouchListener{
 	@Override
 	public boolean onTouch(View arg0, MotionEvent event) {
 		Point point = new Point();
-        point.x = (int) event.getX();
+		Double unit_x;
+        Double unit_y;
+        Double norm;
+		point.x = (int) event.getX();
         point.y = (int) event.getY();
         
         if (touched){
+        	norm = Math.sqrt(Math.pow(point.x - line_touch.x, 2)
+        			         + Math.pow(point.y - line_touch.y, 2)); 
+        	unit_x = (point.x - line_touch.x)/norm;
+        	unit_y = (point.y - line_touch.y)/norm;
+        	
         	Bitmap new_Bitmap = Bitmap.createBitmap(Math.abs(point.x - line_touch.x), Math.abs(point.y - line_touch.y), conf);
         	Rect new_bounds = new Rect(0, 0, new_Bitmap.getWidth(),new_Bitmap.getHeight());
         	Point new_point = new Point();
