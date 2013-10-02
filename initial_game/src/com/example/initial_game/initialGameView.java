@@ -28,6 +28,7 @@ public class initialGameView extends View implements OnTouchListener{
 	Bitmap bouncing_dot;
 	private Rect dot_bounds;
     private Point dot_point;
+    private Point dot_velocity;
    
     private sprite dot;
     
@@ -46,6 +47,7 @@ public class initialGameView extends View implements OnTouchListener{
 		dot_bounds = new Rect(0,0, bouncing_dot.getWidth(), bouncing_dot.getHeight());
 		dot_point = new Point(-1, -1);
 		dot_color = Color.YELLOW;
+		dot_velocity = new Point(-1, -1);
 		dot = new sprite(bouncing_dot, dot_point, dot_bounds);
 		
 		//initialize things
@@ -130,6 +132,22 @@ public class initialGameView extends View implements OnTouchListener{
 
 	synchronized public int getDotHeight() {
 	        return dot.getBounds().height();
+	}
+	
+	synchronized public Point getDotVelocity(){
+		return dot_velocity;
+	}
+	
+	synchronized public void setDotVelocity(Point new_velocity){
+		dot_velocity = new_velocity;
+	}
+	
+	synchronized public void setDotVelocityX(int new_x){
+		dot_velocity.x = new_x;
+	}
+	
+	synchronized public void setDotVelocityY(int new_y){
+		dot_velocity.y = new_y;
 	}
 	
 	private boolean checkForCollision(sprite sprite_first, sprite sprite_second) {
