@@ -54,11 +54,12 @@ public class initialGameView extends View implements OnTouchListener{
 	@Override
 	public boolean onTouch(View arg0, MotionEvent event) {
 		Point point = new Point();
+		point.x = (int) event.getX();
+        point.y = (int) event.getY();
+		
 		Double unit_x;
         Double unit_y;
         Double norm;
-		point.x = (int) event.getX();
-        point.y = (int) event.getY();
         
         if (touched){
         	norm = Math.sqrt(Math.pow(point.x - line_touch.x, 2)
