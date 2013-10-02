@@ -241,6 +241,13 @@ public class initialGameView extends View implements OnTouchListener {
 				new_velocity.y = y.intValue();
 				
 				dot_velocity = new_velocity;
+				Point buffer_point = new Point(dot.getPoint());
+				buffer_point.x += dot_velocity.x * 2;
+				buffer_point.y += dot_velocity.y * 2;
+				setDot(buffer_point.x, buffer_point.y);
+
+				
+				
 				BM_canvas.setBitmap(dot.getBitmap());
 				if (dot_color == Color.YELLOW) {
 					dot_color = Color.RED;
