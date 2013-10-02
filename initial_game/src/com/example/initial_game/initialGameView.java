@@ -62,6 +62,10 @@ public class initialGameView extends View implements OnTouchListener{
         Double norm;
         
         if (touched){
+        	Point line_slopes = new Point();
+            line_slopes.x = point.x - line_touch.x;
+            line_slopes.y = point.y - line_touch.y;
+        	
         	norm = Math.sqrt(Math.pow(point.x - line_touch.x, 2)
         			         + Math.pow(point.y - line_touch.y, 2)); 
         	unit_x = (point.x - line_touch.x)/norm;
@@ -91,7 +95,7 @@ public class initialGameView extends View implements OnTouchListener{
         		}
         	}
         	
-        	line_array.add(new LineObject(new_Bitmap, new_point, positive, new_bounds));
+        	line_array.add(new LineObject(new_Bitmap, new_point, positive, new_bounds, line_slopes));
         	touched = false;
         }
         else{

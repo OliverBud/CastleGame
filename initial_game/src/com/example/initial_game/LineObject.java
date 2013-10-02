@@ -8,10 +8,12 @@ public class LineObject extends sprite{
 	
 
 	private boolean positive;
+	private Point slope;
 	
-	public LineObject(Bitmap BM, Point point, boolean positive, Rect bounds){
+	public LineObject(Bitmap BM, Point point, boolean positive, Rect bounds, Point slope){
 		super(BM, point, bounds);
 		this.positive = positive;
+		this.slope = slope;
 	}
 	
 	public boolean getPositive(){
@@ -22,4 +24,11 @@ public class LineObject extends sprite{
 		this.positive = positive;
 	}
 	
+	public Point getSlope(){
+		return slope;
+	}
+	
+	public void setSlope(Point new_slope){
+		this.slope = new_slope;
+	}
 }
