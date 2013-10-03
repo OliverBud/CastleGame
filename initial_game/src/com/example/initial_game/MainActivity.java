@@ -14,7 +14,7 @@ public class MainActivity extends Activity{
 	private Handler frame = new Handler();
 	private static final int FRAME_RATE = 20;
 	
-	private Point dot_velocity;
+	//private Point dot_velocity;
 	private int dot_maxX;
 	private int dot_maxY;
 	
@@ -57,7 +57,8 @@ public class MainActivity extends Activity{
 		
 		//write stuff
 		((initialGameView)findViewById(R.id.the_canvas)).setDot(10, 10);
-		dot_velocity = new Point(10, 15);
+//		dot_velocity = new Point(10, 15);
+		((initialGameView)findViewById(R.id.the_canvas)).setDotVelocity(new Point(10, 15));
 		dot_maxX = findViewById(R.id.the_canvas).getWidth() -
 				((initialGameView)findViewById(R.id.the_canvas)).getDotWidth();
 		dot_maxY = findViewById(R.id.the_canvas).getHeight() -
@@ -74,17 +75,20 @@ public class MainActivity extends Activity{
 			frame.removeCallbacks(frameUpdate);
 			//write stuff
 			
+			initialGameView the_canvas = ((initialGameView)findViewById(R.id.the_canvas));
+			Point dot_velocity = the_canvas.getDotVelocity();
+			
 			Point sprite1 = new Point
-					(((initialGameView)findViewById(R.id.the_canvas)).getDotX(),
-					 ((initialGameView)findViewById(R.id.the_canvas)).getDotY()) ;
+					(the_canvas.getDotX(),
+					 the_canvas.getDotY()) ;
 			
 			sprite1.x = sprite1.x + dot_velocity.x;
 	        if (sprite1.x > dot_maxX || sprite1.x < 5) {
-	               dot_velocity.x *= -1;
+	               the_canvas.setDotVelocityX(dot_velocity.x *= -1);
 	        }
 	        sprite1.y = sprite1.y + dot_velocity.y;
 	        if (sprite1.y > dot_maxY || sprite1.y < 5) {
-	              dot_velocity.y *= -1;
+	        	the_canvas.setDotVelocityY(dot_velocity.y *= -1);
 	        }
 	          
 	        ((initialGameView)findViewById(R.id.the_canvas)).setDot(sprite1.x, sprite1.y);
