@@ -229,9 +229,9 @@ public class initialGameView extends View implements OnTouchListener {
 				Double x;
 				Double y;
 				
-				int m1 = dot_velocity.y/dot_velocity.x;
-				Double m2 = collision_line.getSlope();
-				double theta = Math.atan((m1 - m2) / (1 + m1*m2));
+				int m2 = dot_velocity.y/dot_velocity.x;
+				Double m1 = collision_line.getSlope();
+				double theta = 2*Math.atan((m1 - m2) / (1 + m1*m2));
 				
 				x = dot_velocity.x*Math.cos(theta) - dot_velocity.y*Math.sin(theta);
 				y = dot_velocity.x*Math.sin(theta) + dot_velocity.y*Math.cos(theta);
